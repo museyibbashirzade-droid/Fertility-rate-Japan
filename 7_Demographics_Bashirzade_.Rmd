@@ -1,0 +1,377 @@
+---
+title: "Graph Codes of Seminar Paper"
+output: 
+date: "2025-06-27"
+
+#Note-All data are presented in the main paper. Some figures have been recreated, so minor visual differences may occur.
+---
+1) population 
+```{r setup, include=FALSE}
+
+library(ggplot2)
+library(scales)  
+library(dplyr)
+library(tidyr)
+
+years <- 1950:2050
+population <- c(
+  86443276.5, 87849926, 89135131.5, 90324184, 91407672.5, 92425478, 93342007.5, 94108976.5, 94846956.5, 
+  95622978, 96399753.5, 97217593.5, 98076405.5, 98958231, 99890178, 100916019.5, 101887835, 102965527.5, 
+  104237471, 105475169.5, 106712368, 107952029.5, 109238955, 110614736.5, 112009694, 113321196, 114502795.5, 
+  115574277, 116576944.5, 117521556, 118358756, 118994053.5, 119485775, 119948946.5, 120384394, 120832163.5, 
+  121366734.5, 121943587, 122476952.5, 122947413, 123399764.5, 123889870.5, 124383707.5, 124839958, 
+  125286860.5, 125672665, 125975302, 126265929, 126549181, 126801564, 127027789, 127260148, 127484598, 
+  127671251.5, 127815774, 127913330.5, 127997247.5, 128087682, 128155990, 128192469.5, 128185275, 
+  128096432.5, 127928285, 127723645.5, 127486604.5, 127275872.5, 127159951, 127064690, 126913432.5, 
+  126699423.5, 126304543, 125679338, 124997578, 124370946.5, 123753041, 123103479, 122427731, 121732340.5, 
+  121024348, 120308089, 119584121.5, 118852085, 118114140.5, 117372474, 116626751, 115876149, 115125565.5, 
+  114377401, 113633614, 112894531.5, 112158303.5, 111422443, 110692357.5, 109972381, 109259528.5, 
+  108551994.5, 107850580.5, 107157970, 106474329, 105796844, 105123167.5
+)
+```
+
+```{r}
+df <- data.frame(Year = years, Population = population)
+
+df$Type <- ifelse(df$Year <= 2025, "Historical", "Projection")
+
+ggplot(df, aes(x = Year, y = Population, color = Type)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 1.5) +
+  scale_color_manual(values = c("Historical" = "steelblue", "Projection" = "firebrick")) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Japan's Population Trend (1950–2050)",
+    subtitle = "Population in persons. Data shows historical and projected values.",
+    x = "Year",
+    y = "Population",
+    color = "Data Type",
+    caption = "Source: UN World Population Prospects"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    plot.subtitle = element_text(size = 12),
+    axis.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom"
+  )
+```
+
+2)Fertility rates vs first marriage age
+
+```{r cars}
+library(ggplot2)
+
+years <- seq(1960, 2023, by = 5)
+men <- c(27.2, 27.1, 27.0, 27.8, 28.1, 28.9, 30.0, 31.0, 31.1, 31.2, 31.2, 31.3, 31.3)
+women <- c(24.3, 24.4, 24.6, 25.2, 25.8, 26.7, 27.8, 28.8, 29.3, 29.6, 29.7, 29.8, 29.8)
+tfr <- c(2.0, 2.1, 1.9, 1.8, 1.5, 1.4, 1.34, 1.36, 1.4, 1.37, 1.32, 1.25, 1.2)
+
+data <- data.frame(
+  Year = years,
+  Men = men,
+  Women = women,
+  TFR = tfr
+)
+
+scale_factor <- 10  
+data$TFR_scaled <- data$TFR * scale_factor
+
+ggplot(data, aes(x = Year)) +
+  geom_line(aes(y = Women, color = "Women"), size = 1.4) +
+  geom_point(aes(y = Women, color = "Women"), size = 2) +
+  
+  geom_line(aes(y = Men, color = "Men"), size = 1.4) +
+  geom_point(aes(y = Men, color = "Men"), size = 2) +
+  
+  geom_line(aes(y = TFR_scaled, color = "Fertility"), linetype = "dashed", size = 1.4) +
+  geom_point(aes(y = TFR_scaled, color = "Fertility"), shape = 21, fill = "white", size = 2) +
+  
+  scale_y_continuous(
+    name = "Mean Age at First Marriage (Men & Women)",
+    sec.axis = sec_axis(~./scale_factor, name = "Total Fertility Rate (TFR)", breaks = seq(1.2, 2.1, 0.2))
+  ) +
+  
+  scale_color_manual(
+    name = "Legend",
+    values = c("Men" = "black", "Women" = "blue", "Fertility" = "red")
+  ) +
+  
+  labs(
+    title = "Japan: Rising Marriage Age vs. Declining Fertility Rate (1960–2023)"
+  ) +
+  theme_bw(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.title.y.right = element_text(color = "red"),
+    axis.text.y.right = element_text(color = "red"),
+    axis.title.y.left = element_text(color = "black"),
+    axis.text.y.left = element_text(color = "black"),
+    legend.position = "top"
+  )
+
+
+```
+
+3) working hours
+
+
+```{r pressure, echo=FALSE}
+library(tidyverse)
+
+data <- data.frame(
+  Year = 1970:2023,
+  France = c(1.993, 1.990, 1.937, 1.920, 1.888, 1.863, 1.889, 1.850, 1.819, 1.816,
+             1.806, 1.786, 1.714, 1.696, 1.690, 1.654, 1.648, 1.659, 1.667, 1.651,
+             1.645, 1.638, 1.635, 1.627, 1.623, 1.601, 1.597, 1.596, 1.585, 1.578,
+             1.558, 1.538, 1.504, 1.507, 1.531, 1.532, 1.515, 1.537, 1.543, 1.531,
+             1.540, 1.546, 1.541, 1.526, 1.518, 1.519, 1.522, 1.508, 1.514, 1.518,
+             1.400, 1.475, 1.501, 1.500) * 1000,
+  Japan = c(2.243, 2.239, 2.228, 2.201, 2.137, 2.112, 2.128, 2.129, 2.123, 2.126,
+            2.121, 2.106, 2.104, 2.095, 2.108, 2.093, 2.097, 2.096, 2.092, 2.070,
+            2.031, 1.998, 1.965, 1.905, 1.898, 1.884, 1.892, 1.865, 1.842, 1.810,
+            1.821, 1.809, 1.798, 1.799, 1.785, 1.777, 1.786, 1.785, 1.771, 1.714,
+            1.733, 1.728, 1.745, 1.734, 1.729, 1.719, 1.714, 1.709, 1.680, 1.644,
+            1.597, 1.607, 1.607, 1.611) * 1000,
+  Korea = c(rep(NA, 38),
+            2.228, 2.174, 2.163, 2.136, 2.119, 2.106, 2.076, 2.083, 2.068, 2.018,
+            1.993, 1.967, 1.908, 1.910, 1.901, 1.872) * 1000,
+  US = c(1.949, 1.936, 1.932, 1.933, 1.901, 1.881, 1.884, 1.886, 1.878, 1.876,
+         1.859, 1.854, 1.846, 1.867, 1.883, 1.882, 1.875, 1.883, 1.883, 1.895,
+         1.878, 1.868, 1.867, 1.875, 1.887, 1.886, 1.887, 1.893, 1.892, 1.888,
+         1.880, 1.860, 1.853, 1.843, 1.845, 1.842, 1.846, 1.842, 1.829, 1.799,
+         1.810, 1.819, 1.826, 1.824, 1.829, 1.830, 1.822, 1.820, 1.826, 1.817,
+         1.789, 1.813, 1.804, 1.799) * 1000,
+  OECD = c(2.031, 2.018, 2.004, 1.997, 1.970, 1.953, 1.956, 1.947, 1.936, 1.930,
+           1.919, 1.908, 1.900, 1.899, 1.898, 1.893, 1.889, 1.888, 1.888, 1.885,
+           1.872, 1.861, 1.857, 1.852, 1.859, 1.852, 1.857, 1.857, 1.848, 1.848,
+           1.838, 1.825, 1.823, 1.815, 1.814, 1.824, 1.825, 1.822, 1.816, 1.790,
+           1.797, 1.798, 1.797, 1.792, 1.791, 1.790, 1.787, 1.779, 1.775, 1.764,
+           1.683, 1.739, 1.746, 1.742) * 1000
+)
+
+# Long format
+long_data <- pivot_longer(data, cols = -Year, names_to = "Country", values_to = "Hours")
+
+ggplot(long_data, aes(x = Year, y = Hours, color = Country)) +
+  geom_line(size = 1.2) +
+  geom_point(data = filter(long_data, Year == 2023), size = 2) +
+  geom_text(
+    data = filter(long_data, Year == 2023),
+    aes(label = paste0(round(Hours), " hrs")),
+    hjust = -0.1, vjust = 0.5, size = 3.5, show.legend = FALSE,
+    check_overlap = TRUE
+  ) +
+  scale_y_continuous(
+    labels = scales::number_format(accuracy = 1)
+  ) +
+  labs(
+    title = "Average Annual Working Hours per Worker by Country (1970–2023)",
+    subtitle = "Source: OECD Labour Force Statistics (real hours worked)",
+    x = "Year",
+    y = "Annual Hours Worked",
+    color = "Country"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "top"
+  ) +
+  expand_limits(y = 1400)
+
+
+
+```
+
+4) Vacant houses "AKIYA" across the country
+```{r}
+library(ggplot2)
+
+years <- 2012:2024
+foreign_residents <- c(
+  2033656, 2066445, 2121831, 2232189, 2382822, 2561848, 2731093,
+  2933137, 2887116, 2760635, 3075213, 3410992, 3768977
+)
+
+df <- data.frame(
+  Year = factor(years),
+  Residents = foreign_residents / 10000  # 万人
+)
+
+ggplot(df, aes(x = Year, y = Residents)) +
+  geom_bar(stat = "identity", fill = "#5dade2") +
+  geom_text(aes(label = scales::comma(foreign_residents)), vjust = -0.5, size = 3) +
+  labs(
+    title = "第1図　在留外国人数の推移",
+    y = "（万人）",
+    x = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+5) Gross Domestic savings(%of Gdp) 
+```{r}
+library(ggplot2)
+
+# Yıllar 1970-2023
+years <- 1970:2023
+
+savings <- c(
+  43.2819090412502,41.4283551160542,40.7699425554146,40.9452768014521,39.2248088747399,
+  35.4687028873579,35.3928248523196,35.2591356348139,35.4744319069789,34.5081967308465,
+  34.2353966148318,34.6110694974326,33.3907689535814,32.9618170439641,33.7188219115345,
+  34.3537939566146,34.7614911828695,34.7757271487624,35.97131964723,36.1883531731555,
+  36.2160577903386,36.6845882402976,35.555730984455,33.87283353862,32.5218563282699,
+  32.1764486540321,32.404552151842,32.0942464051761,31.3352683535838,29.6858616633896,
+  29.7820374634608,28.348950322757,27.1626283393396,27.2664048952552,27.546383090773,
+  27.4541628451824,27.3759077018862,27.5303983057463,26.2111712279742,23.0521414382073,
+  23.9288383334263,22.894532483638,22.3635480474837,22.0071688533491,22.4422381175418,
+  24.6114592004978,25.6412522048642,25.9745096940187,25.6616557387033,25.5003129532535,
+  24.9775753684364,25.1985173318778,22.8273350793563,24.6308537701663
+)
+
+df <- data.frame(Year = years, Savings = savings)
+
+ggplot(df, aes(x = Year, y = Savings)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 1.5) +
+  labs(
+    title = "Gross domestic savings (% of GDP) 1970-2023",
+    x = "Year",
+    y = "Savings (% GDP)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 12)
+  )
+```
+6) Age Pyramid
+
+```{r}
+data5 <- tribble(
+  ~Year, ~Sex, ~`0-4`, ~`5-9`, ~`10-14`, ~`15-19`, ~`20-24`, ~`25-29`, ~`30-34`, ~`35-39`, ~`40-44`, ~`45-49`, ~`50-54`, ~`55-59`, ~`60-64`, ~`65-69`, ~`70-74`, ~`75-79`, ~`80-84`, ~`85-89`, ~`90-94`, ~`95-99`, ~`100`,
+  
+  1990, "M", 2.7, 3, 3.5, 4.1, 3.7, 3.4, 3.2, 3.6, 4.4, 3.7, 3.3, 3.1, 2.7, 1.8, 1.3, 1, 0.6, 0.2, 0.1, 0, 0,
+  1990, "F", 2.5, 2.8, 3.3, 3.9, 3.5, 3.2, 3.1, 3.6, 4.3, 3.7, 3.3, 3.2, 2.9, 2.4, 1.8, 1.5, 1, 0.5, 0.2, 0, 0,
+  
+  2020, "M", 1.8, 2.1, 2.2, 2.3, 2.5, 2.5, 2.7, 2.9, 3.4, 3.9, 3.4, 3.1, 2.9, 3.2, 3.5, 2.6, 1.9, 1.1, 0.5, 0.1, 0,
+  2020, "F", 1.7, 2, 2.1, 2.2, 2.4, 2.4, 2.5, 2.8, 3.3, 3.8, 3.4, 3.1, 3, 3.3, 3.9, 3.2, 2.6, 2, 1.2, 0.4, 0.1,
+  
+  2030, "M", 1.8, 1.8, 1.9, 2.2, 2.4, 2.5, 2.7, 2.7, 2.8, 3.1, 3.5, 4, 3.5, 3.1, 2.7, 2.8, 2.7, 1.5, 0.7, 0.2, 0,
+  2030, "F", 1.7, 1.7, 1.8, 2.1, 2.3, 2.4, 2.6, 2.6, 2.7, 3, 3.5, 4, 3.5, 3.2, 3, 3.3, 3.6, 2.5, 1.5, 0.6, 0.1,
+  
+  2050, "M", 1.8, 1.9, 2, 2, 2.1, 2.1, 2.3, 2.7, 2.8, 2.9, 3, 3, 3.1, 3.2, 3.6, 3.8, 2.8, 1.9, 1, 0.4, 0.1,
+  2050, "F", 1.7, 1.8, 1.9, 1.9, 2, 2, 2.2, 2.6, 2.7, 2.8, 3, 2.9, 3.1, 3.3, 3.8, 4.2, 3.5, 2.8, 1.9, 1, 0.3
+)
+```
+
+```{r}
+data_long <- data5 %>%
+  pivot_longer(cols = -c(Year, Sex), names_to = "AgeGroup", values_to = "Percent") %>%
+  mutate(
+    Percent = ifelse(Sex == "M", -Percent, Percent),
+    AgeGroup = factor(AgeGroup, levels = rev(unique(AgeGroup)))
+  )
+```
+
+```{r}
+plot_pyramid <- function(df, year) {
+  ggplot(filter(df, Year == year), aes(x = AgeGroup, y = Percent, fill = Sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    coord_flip() +
+    scale_y_continuous(labels = abs, limits = c(-5, 5)) +
+    scale_fill_manual(values = c("M" = "steelblue", "F" = "salmon")) +
+    labs(title = paste("Population Pyramid of Japan -", year),
+         x = "Age Group", y = "Percent of Total Population") +
+    theme_minimal(base_size = 13) +
+    theme(legend.position = "right")
+}
+```
+```{r}
+
+
+# Grafikleri değişkenlere ata
+p1 <- plot_pyramid(data_long, 1990)
+p2 <- plot_pyramid(data_long, 2020)
+p3 <- plot_pyramid(data_long, 2030)
+p4 <- plot_pyramid(data_long, 2050)
+
+# Patchwork ile birleştir
+library(patchwork)
+(p1 | p2) / (p3 | p4)
+```
+
+```{R}
+#library(ggplot2)
+
+# Veri
+data <- data.frame(
+  observation_date = as.Date(c(
+    "1955-01-01","1956-01-01","1957-01-01","1958-01-01","1959-01-01","1960-01-01",
+    "1961-01-01","1962-01-01","1963-01-01","1964-01-01","1965-01-01","1966-01-01",
+    "1967-01-01","1968-01-01","1969-01-01","1970-01-01","1971-01-01","1972-01-01",
+    "1973-01-01","1974-01-01","1975-01-01","1976-01-01","1977-01-01","1978-01-01",
+    "1979-01-01","1980-01-01","1981-01-01","1982-01-01","1983-01-01","1984-01-01",
+    "1985-01-01","1986-01-01","1987-01-01","1988-01-01","1989-01-01","1990-01-01",
+    "1991-01-01","1992-01-01","1993-01-01","1994-01-01","1995-01-01","1996-01-01",
+    "1997-01-01","1998-01-01","1999-01-01","2000-01-01","2001-01-01","2002-01-01",
+    "2003-01-01","2004-01-01","2005-01-01","2006-01-01","2007-01-01","2008-01-01",
+    "2009-01-01","2010-01-01","2011-01-01","2012-01-01","2013-01-01","2014-01-01",
+    "2015-01-01","2016-01-01","2017-01-01","2018-01-01","2019-01-01","2020-01-01",
+    "2021-01-01","2022-01-01","2023-01-01","2024-01-01"
+  )),
+  QJPN628BIS = c(
+    2.2115,2.5192,3.1827,3.9135,4.8462,5.9615,8.2115,10.3846,12.0192,13.6539,
+    15.6731,16.6346,18.2692,21.3462,25.4808,31.25,36.8269,42.1154,54.3269,68.5577,
+    65.6731,66.6346,69.2308,72.5,77.9808,87.8847,98.6539,107.5962,113.8462,
+    117.9808,121.25,123.8462,129.4231,140.1924,147.7885,166.7308,182.7885,
+    178.2693,169.4231,164.4231,161.9231,159.0385,156.6347,154.6154,150.4808,
+    145.0962,139.1347,132.2116,124.4231,116.4424,110.1924,105.9616,104.327,
+    103.5577,99.2083,99.6083,100.4417,99.9417,99.475,102.5419,104.9754,106.6756,
+    110.8426,112.5427,115.1429,114.6429,118.4765,129.2108,135.3446,138.7116
+  )
+)
+
+# Bubble dönemi
+bubble_start <- as.Date("1986-01-01")
+bubble_end <- as.Date("1991-01-01")
+
+# Grafik
+ggplot(data, aes(x = observation_date, y = QJPN628BIS)) +
+  # Bubble gölgesi
+  annotate("rect", xmin = bubble_start, xmax = bubble_end, ymin = -Inf, ymax = Inf,
+           fill = "firebrick", alpha = 0.1) +
+  # Zaman serisi çizgisi
+  geom_line(color = "#002244", size = 1.2) +
+  # Zirve noktası için nokta ve etiket (opsiyonel)
+  geom_point(data = subset(data, observation_date == as.Date("1991-01-01")),
+             aes(x = observation_date, y = QJPN628BIS), color = "firebrick", size = 3) +
+  geom_text(data = subset(data, observation_date == as.Date("1991-01-01")),
+            aes(x = observation_date, y = QJPN628BIS + 5, label = "Bubble Peak"),
+            color = "firebrick", size = 4, vjust = 0) +
+  # Etiket ve tema
+  labs(
+    title = "Japan House Price Index (1955–2024)",
+    subtitle = "Asset Price Bubble (1986–1991) highlighted",
+    x = "Year",
+    y = "Index (QJPN628BIS)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18),
+    plot.subtitle = element_text(size = 14),
+    axis.title = element_text(size = 13),
+    panel.grid.minor = element_blank()
+  )
+
+```
