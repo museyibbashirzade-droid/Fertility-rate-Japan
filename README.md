@@ -1,1 +1,1 @@
-# Fertility-rate-Japan
+This repository contains the data visualizations and research summary for the seminar paper submitted to the Faculty of Business and Economics at TU Dresden. The study investigates the socio-economic causes and consequences of Japan’s declining fertility rate and evaluates the effectiveness of government policy responses.
